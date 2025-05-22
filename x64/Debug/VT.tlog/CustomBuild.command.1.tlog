@@ -1,0 +1,2 @@
+^C:\USERS\52511\DESKTOP\VT\VT\VMXS.ASM
+ml64 /Fo x64\Debug\vmxs.obj /c vmxs.asm

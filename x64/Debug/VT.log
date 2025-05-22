@@ -1,0 +1,32 @@
+﻿  Building 'VT' with toolset 'WindowsKernelModeDriver10.0' and the 'Desktop' target platform.
+  DriverMain.c
+C:\Users\52511\Desktop\VT\VT\vmxDefine.h(37,6): warning C4201: 使用了非标准扩展: 无名称的结构/联合
+C:\Users\52511\Desktop\VT\VT\vmxDefine.h(54,6): warning C4201: 使用了非标准扩展: 无名称的结构/联合
+C:\Users\52511\Desktop\VT\VT\DriverMain.c(10,56): warning C4100: “DeferredContext”: 未引用的形参
+C:\Users\52511\Desktop\VT\VT\DriverMain.c(10,36): warning C4100: “Dpc”: 未引用的形参
+C:\Users\52511\Desktop\VT\VT\DriverMain.c(31,55): warning C4100: “DeferredContext”: 未引用的形参
+C:\Users\52511\Desktop\VT\VT\DriverMain.c(31,35): warning C4100: “Dpc”: 未引用的形参
+C:\Users\52511\Desktop\VT\VT\DriverMain.c(36,34): warning C4100: “pDriver”: 未引用的形参
+C:\Users\52511\Desktop\VT\VT\DriverMain.c(41,62): warning C4100: “pReg”: 未引用的形参
+  vmx.c
+C:\Users\52511\Desktop\VT\VT\vmxDefine.h(37,6): warning C4201: 使用了非标准扩展: 无名称的结构/联合
+C:\Users\52511\Desktop\VT\VT\vmxDefine.h(54,6): warning C4201: 使用了非标准扩展: 无名称的结构/联合
+C:\Users\52511\Desktop\VT\VT\vmx.c(46,53): warning C4057: “函数”:“unsigned __int64 *”与“LONGLONG *”在稍微不同的基类型间接寻址上不同
+C:\Users\52511\Desktop\VT\VT\vmx.c(105,37): warning C4245: “函数”: 从“int”转换到“size_t”，有符号/无符号不匹配
+C:\Users\52511\Desktop\VT\VT\vmx.c(152,84): warning C4047: “=”:“PVOID”与“ULONG64”的间接级别不同
+C:\Users\52511\Desktop\VT\VT\vmx.c(159,46): warning C4057: “函数”:“unsigned __int64 *”与“LONGLONG *”在稍微不同的基类型间接寻址上不同
+C:\Users\52511\Desktop\VT\VT\vmx.c(160,46): warning C4057: “函数”:“unsigned __int64 *”与“LONGLONG *”在稍微不同的基类型间接寻址上不同
+C:\Users\52511\Desktop\VT\VT\vmx.c(130,61): warning C4100: “hostEip”: 未引用的形参
+C:\Users\52511\Desktop\VT\VT\vmx.c(130,43): warning C4100: “GuestEsp”: 未引用的形参
+C:\Users\52511\Desktop\VT\VT\vmx.c(130,25): warning C4100: “GuestEip”: 未引用的形参
+C:\Users\52511\Desktop\VT\VT\vmx.c(202,1): warning C4047: “初始化”:“ULONG64”与“PULONG64”的间接级别不同
+  vmxTools.c
+C:\Users\52511\Desktop\VT\VT\vmxDefine.h(37,6): warning C4201: 使用了非标准扩展: 无名称的结构/联合
+C:\Users\52511\Desktop\VT\VT\vmxDefine.h(54,6): warning C4201: 使用了非标准扩展: 无名称的结构/联合
+  正在生成代码...
+  VT.vcxproj -> C:\Users\52511\Desktop\VT\x64\Debug\VT.sys
+  Done Adding Additional Store
+  Successfully signed: C:\Users\52511\Desktop\VT\x64\Debug\VT.sys
+  
+  Inf2Cat task was skipped as there were no inf files to process
+  
