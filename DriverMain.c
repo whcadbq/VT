@@ -24,7 +24,7 @@ VOID VmxStartVT(_In_ struct _KDPC* Dpc, _In_opt_ PVOID DeferredContext, _In_opt_
 	{
 		DbgPrintEx(77, 0, "[db]:VmxIsCheckSupportVTCr4  number = %d\r\n", KeGetCurrentProcessorNumber());
 	}
-	VmxInit(1234);
+	VmxInit(DeferredContext);
 	KeSignalCallDpcDone(SystemArgument1);
 	KeSignalCallDpcSynchronize(SystemArgument2);
 }
@@ -40,7 +40,7 @@ VOID DriverUnload(PDRIVER_OBJECT pDriver)
 
 NTSTATUS DriverEntry(PDRIVER_OBJECT pDriver, PUNICODE_STRING pReg)
 {
-	KeGenericCallDpc(VmxStartVT, NULL);
+	KeGenericCallDpc(VmxStartVT,AsmVmxExitHandler);
     pDriver->DriverUnload = DriverUnload;
     return STATUS_SUCCESS;
 }

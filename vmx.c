@@ -72,6 +72,7 @@ void FullGdtDataItem(int index, short selector)
 
 void VmxInitGuest(ULONG64 GuestEip, ULONG64 GuestEsp)
 {
+	//Ð´Èë¶Î¼Ä´æÆ÷
 	FullGdtDataItem(0, AsmReadES());
 	FullGdtDataItem(1, AsmReadCS());
 	FullGdtDataItem(2, AsmReadSS());
@@ -79,7 +80,7 @@ void VmxInitGuest(ULONG64 GuestEip, ULONG64 GuestEsp)
 	FullGdtDataItem(4, AsmReadFS());
 	FullGdtDataItem(5, AsmReadGS());
 	FullGdtDataItem(6, AsmReadLDTR());
-	//Ð´tr
+	//Ð´Èëtr¼Ä´æÆ÷
 	GdtTable gdtTable = { 0 };
 	AsmGetGdtTable(&gdtTable);
 	ULONG trSelector = AsmReadTR();
@@ -94,65 +95,39 @@ void VmxInitGuest(ULONG64 GuestEip, ULONG64 GuestEsp)
 	__vmx_vmwrite(GUEST_TR_LIMIT, trlimit);
 	__vmx_vmwrite(GUEST_TR_AR_BYTES, attr);
 	__vmx_vmwrite(GUEST_TR_SELECTOR, trSelector);
-
+	//ÉèÖÃÍ¨ÓÃ¿ØÖÆ¼Ä´æÆ÷
 	__vmx_vmwrite(GUEST_CR0, __readcr0());
 	__vmx_vmwrite(GUEST_CR4, __readcr4());
 	__vmx_vmwrite(GUEST_CR3, __readcr3());
 	__vmx_vmwrite(GUEST_DR7, __readdr(7));
 	__vmx_vmwrite(GUEST_RFLAGS, __readeflags());
+
 	__vmx_vmwrite(GUEST_RSP, GuestEsp);
 	__vmx_vmwrite(GUEST_RIP, GuestEip);
-
+	//VMCS link pointer ÉèÖÃÎª -1£¨½ûÓÃÇ¶Ì× VMX£©
 	__vmx_vmwrite(VMCS_LINK_POINTER, -1);
-
+	//³õÊ¼»¯ Guest Ä£Ê½ÏÂÐèÒªµÄ MSR Öµ
 	__vmx_vmwrite(GUEST_IA32_DEBUGCTL, __readmsr(IA32_MSR_DEBUGCTL));
 	__vmx_vmwrite(GUEST_IA32_PAT, __readmsr(IA32_MSR_PAT));
 	__vmx_vmwrite(GUEST_IA32_EFER, __readmsr(IA32_MSR_EFER));
-
 	__vmx_vmwrite(GUEST_FS_BASE, __readmsr(IA32_FS_BASE));
 	__vmx_vmwrite(GUEST_GS_BASE, __readmsr(IA32_GS_BASE));
-
 	__vmx_vmwrite(GUEST_SYSENTER_CS, __readmsr(0x174));
 	__vmx_vmwrite(GUEST_SYSENTER_ESP, __readmsr(0x175));
 	__vmx_vmwrite(GUEST_SYSENTER_EIP, __readmsr(0x176));
-
-
 	//IDT GDT
-
 	GdtTable idtTable;
 	__sidt(&idtTable);
-
 	__vmx_vmwrite(GUEST_GDTR_BASE, gdtTable.Base);
 	__vmx_vmwrite(GUEST_GDTR_LIMIT, gdtTable.limit);
 	__vmx_vmwrite(GUEST_IDTR_LIMIT, idtTable.limit);
 	__vmx_vmwrite(GUEST_IDTR_BASE, idtTable.Base);
-
 }
 
 void VmxInitHost(ULONG64 HostEip)
 {
-	GdtTable gdtTable = { 0 };
-	AsmGetGdtTable(&gdtTable);
-
 	PVMX_CPU pVcpu = VmxGetCurrentCPUPCB();
-
-	ULONG trSelector = AsmReadTR();
-
-	trSelector &= 0xFFF8;
-
-	LARGE_INTEGER trBase = { 0 };
-
-	PULONG trItem = (PULONG)(gdtTable.Base + trSelector);
-
-
-	//¶ÁTR
-	trBase.LowPart = ((trItem[0] >> 16) & 0xFFFF) | ((trItem[1] & 0xFF) << 16) | ((trItem[1] & 0xFF000000));
-	trBase.HighPart = trItem[2];
-
-	//ÊôÐÔ
-	__vmx_vmwrite(HOST_TR_BASE, trBase.QuadPart);
-	__vmx_vmwrite(HOST_TR_SELECTOR, trSelector);
-
+	//Ð´Èë¶Î¼Ä´æÆ÷
 	__vmx_vmwrite(HOST_ES_SELECTOR, AsmReadES() & 0xfff8);
 	__vmx_vmwrite(HOST_CS_SELECTOR, AsmReadCS() & 0xfff8);
 	__vmx_vmwrite(HOST_SS_SELECTOR, AsmReadSS() & 0xfff8);
@@ -160,31 +135,38 @@ void VmxInitHost(ULONG64 HostEip)
 	__vmx_vmwrite(HOST_FS_SELECTOR, AsmReadFS() & 0xfff8);
 	__vmx_vmwrite(HOST_GS_SELECTOR, AsmReadGS() & 0xfff8);
 
+	GdtTable gdtTable = { 0 };
+	AsmGetGdtTable(&gdtTable);
 
-
+	//Ð´Èëtr¼Ä´æÆ÷
+	ULONG trSelector = AsmReadTR();
+	trSelector &= 0xFFF8;
+	LARGE_INTEGER trBase = { 0 };
+	PULONG trItem = (PULONG)(gdtTable.Base + trSelector);
+	trBase.LowPart = ((trItem[0] >> 16) & 0xFFFF) | ((trItem[1] & 0xFF) << 16) | ((trItem[1] & 0xFF000000));
+	trBase.HighPart = trItem[2];
+	__vmx_vmwrite(HOST_TR_BASE, trBase.QuadPart);
+	__vmx_vmwrite(HOST_TR_SELECTOR, trSelector);
+	//ÉèÖÃÍ¨ÓÃ¿ØÖÆ¼Ä´æÆ÷
 	__vmx_vmwrite(HOST_CR0, __readcr0());
 	__vmx_vmwrite(HOST_CR4, __readcr4());
 	__vmx_vmwrite(HOST_CR3, __readcr3());
+
 	__vmx_vmwrite(HOST_RSP, (ULONG64)pVcpu->VmxHostStackBase);
 	__vmx_vmwrite(HOST_RIP, HostEip);
-
-
+	//MSR ¼Ä´æÆ÷ÉèÖÃ
 	__vmx_vmwrite(HOST_IA32_PAT, __readmsr(IA32_MSR_PAT));
 	__vmx_vmwrite(HOST_IA32_EFER, __readmsr(IA32_MSR_EFER));
-
 	__vmx_vmwrite(HOST_FS_BASE, __readmsr(IA32_FS_BASE));
 	__vmx_vmwrite(HOST_GS_BASE, __readmsr(IA32_GS_KERNEL_BASE));
-
 	__vmx_vmwrite(HOST_IA32_SYSENTER_CS, __readmsr(0x174));
 	__vmx_vmwrite(HOST_IA32_SYSENTER_ESP, __readmsr(0x175));
 	__vmx_vmwrite(HOST_IA32_SYSENTER_EIP, __readmsr(0x176));
 
 
 	//IDT GDT
-
 	GdtTable idtTable;
 	__sidt(&idtTable);
-
 	__vmx_vmwrite(HOST_GDTR_BASE, gdtTable.Base);
 	__vmx_vmwrite(HOST_IDTR_BASE, idtTable.Base);
 }
@@ -192,9 +174,8 @@ void VmxInitHost(ULONG64 HostEip)
 void VmxInitEntry()
 {
 	ULONG64 vmxBasic = __readmsr(IA32_VMX_BASIC);
-	ULONG64 mseregister = ((vmxBasic >> 55) & 1) ? IA32_MSR_VMX_TRUE_ENTRY_CTLS : IA32_VMX_ENTRY_CTLS;
-
-	ULONG64 value = VmxAdjustContorls(0x200, mseregister);
+	ULONG64 msrItem = ((vmxBasic >> 55) & 1) ? IA32_MSR_VMX_TRUE_ENTRY_CTLS : IA32_VMX_ENTRY_CTLS;
+	ULONG64 value = VmxAdjustContorls(0x200, msrItem);
 	__vmx_vmwrite(VM_ENTRY_CONTROLS, value);
 	__vmx_vmwrite(VM_ENTRY_MSR_LOAD_COUNT, 0);
 	__vmx_vmwrite(VM_ENTRY_INTR_INFO_FIELD, 0);
@@ -203,10 +184,8 @@ void VmxInitEntry()
 void VmxInitExit()
 {
 	ULONG64 vmxBasic = __readmsr(IA32_VMX_BASIC);
-
-	ULONG64 mseregister = ((vmxBasic >> 55) & 1) ? IA32_MSR_VMX_TRUE_EXIT_CTLS : IA32_MSR_VMX_EXIT_CTLS;
-
-	ULONG64 value = VmxAdjustContorls(0x200 | 0x8000, mseregister);
+	ULONG64 msrItem = ((vmxBasic >> 55) & 1) ? IA32_MSR_VMX_TRUE_EXIT_CTLS : IA32_MSR_VMX_EXIT_CTLS;
+	ULONG64 value = VmxAdjustContorls(0x200 | 0x8000, msrItem);
 	__vmx_vmwrite(VM_EXIT_CONTROLS, value);
 	__vmx_vmwrite(VM_EXIT_MSR_LOAD_COUNT, 0);
 	__vmx_vmwrite(VM_EXIT_INTR_INFO, 0);
@@ -215,19 +194,14 @@ void VmxInitExit()
 void VmxInitControls()
 {
 	ULONG64 vmxBasic = __readmsr(IA32_VMX_BASIC);
-
-	ULONG64 mseregister = ((vmxBasic >> 55) & 1) ? IA32_MSR_VMX_TRUE_PINBASED_CTLS : IA32_MSR_VMX_PINBASED_CTLS;
-
-	ULONG64 value = VmxAdjustContorls(0, mseregister);
-
+	ULONG64 msrItem = ((vmxBasic >> 55) & 1) ? IA32_MSR_VMX_TRUE_PINBASED_CTLS : IA32_MSR_VMX_PINBASED_CTLS;
+	ULONG64 value = VmxAdjustContorls(0, msrItem);
 	__vmx_vmwrite(PIN_BASED_VM_EXEC_CONTROL, value);
 
 
 
-	mseregister = ((vmxBasic >> 55) & 1) ? IA32_MSR_VMX_TRUE_PROCBASED_CTLS : IA32_MSR_VMX_PROCBASED_CTLS;
-
-	value = VmxAdjustContorls(0, mseregister);
-
+	msrItem = ((vmxBasic >> 55) & 1) ? IA32_MSR_VMX_TRUE_PROCBASED_CTLS : IA32_MSR_VMX_PROCBASED_CTLS;
+	value = VmxAdjustContorls(0, msrItem);
 	__vmx_vmwrite(CPU_BASED_VM_EXEC_CONTROL, value);
 
 	/*
@@ -285,6 +259,7 @@ int VmxInitVmcs(ULONG64 GuestEip, ULONG64 GuestEsp, ULONG64 hostEip)
 
 	return 0;
 }
+
 void VmxDestory()
 {
 	PVMX_CPU pVcpu = VmxGetCurrentCPUPCB();
@@ -315,6 +290,7 @@ void VmxDestory()
 	mcr4.flags.VMXE = 0;
 	__writecr4(mcr4.value);
 }
+
 int VmxInit(ULONG64 hostEip)
 {
 	PVMX_CPU pVcpu = VmxGetCurrentCPUPCB();

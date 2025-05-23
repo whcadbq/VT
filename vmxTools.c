@@ -29,3 +29,11 @@ BOOLEAN VmxIsCheckSupportVTCr4()
 	cr4.value = __readcr4();
 	return cr4.flags.VMXE == 0;
 }
+
+ULONG64 VmxAdjustContorls(ULONG64 value, ULONG64 msr)
+{
+	LARGE_INTEGER msrValue;
+	msrValue.QuadPart = __readmsr(msr);
+	value = (msrValue.LowPart | value) & msrValue.HighPart;
+	return value;
+}

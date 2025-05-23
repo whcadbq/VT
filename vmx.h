@@ -2,6 +2,7 @@
 #include <ntifs.h>
 #include <intrin.h>
 #include "vmxDefine.h"
+#include "vmxTools.h"
 #include "vmxs.h"
 typedef struct _VMX_CPU
 {
