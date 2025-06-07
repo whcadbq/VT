@@ -21,3 +21,9 @@
 *.cache
 *.db
 *.DS_Store
+*.json
+*.sqlite
+*.db-shm
+*.db-wal
+*.opendb
+*.ipch

@@ -60,10 +60,6 @@ NTSTATUS DriverEntry(PDRIVER_OBJECT pDriver, PUNICODE_STRING pReg)
 {
 
 	KeGenericCallDpc(VmxStartVT, AsmVmxExitHandler);
-	//DbgBreakPoint();
-	
-	
-
 	pDriver->DriverUnload = DriverUnload;
 	return STATUS_SUCCESS;
 }
